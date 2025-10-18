@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   mysqldb:
     image: mysql:8
@@ -9,8 +11,6 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - springboot-mysql-net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pChaitu@3105"]
       interval: 10s
@@ -26,9 +26,11 @@ services:
     depends_on:
       mysqldb:
         condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/projectdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Chaitu@3105
     restart: on-failure
-    networks:
-      - springboot-mysql-net
 
   frontend:
     image: krishnachaitanya3105/dockerpractice-frontend
@@ -38,11 +40,6 @@ services:
     depends_on:
       - backend
     restart: on-failure
-    networks:
-      - springboot-mysql-net
 
 volumes:
   mysql_data:
-
-networks:
-  springboot-mysql-net:
